@@ -133,10 +133,7 @@ app.post('/api/turnos', async (req, res) => {
 
 // Conectar a la base de datos MongoDB Atlas
 mongoose
-  .connect('mongodb+srv://fedetempo:fede2101@egresos.gmgjv.mongodb.net/?retryWrites=true&w=majority&appName=egresos', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect('mongodb+srv://fedetempo:fede2101@egresos.gmgjv.mongodb.net/?retryWrites=true&w=majority&appName=egresos')
   .then(() => console.log('Conectado a la base de datos'))
   .catch((err) => {
     console.error('Error al conectar a la base de datos:', err);
