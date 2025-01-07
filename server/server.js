@@ -77,6 +77,7 @@ const app = express();
 
 // Obtén el puerto desde el entorno o usa 5000 para desarrollo local
 const port = process.env.PORT || 5000;
+const finalPort = port || 10000; 
 
 // Configura CORS (Permitir solo solicitudes de tu frontend)
 const allowedOrigins = ['https://egresoanticipado-frontend.onrender.com','http://localhost:5173'];
@@ -144,6 +145,6 @@ mongoose
   });
 
 // Iniciar el servidor
-app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
+app.listen(finalPort, () => {
+  console.log(`Servidor corriendo en http://localhost:${finalPort}`);
 });
