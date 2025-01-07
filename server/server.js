@@ -79,7 +79,7 @@ const app = express();
 const port = process.env.PORT || 10000;
 
 // Configura CORS (Permitir solo solicitudes de tu frontend)
-const allowedOrigins = ['https://egresoanticipado-frontend.onrender.com'];
+const allowedOrigins = ['https://egresoanticipado-frontend.onrender.com','http://localhost:5173'];
 app.use(cors({
   origin: allowedOrigins,
 }));
