@@ -163,6 +163,7 @@ const EgresosApp = () => {
 
   // Obtener la URL del backend desde las variables de entorno
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  console.log('Backend URL:', backendUrl);
 
   // Obtener el día actual y verificar si es 01:00 AM o más tarde
   useEffect(() => {
