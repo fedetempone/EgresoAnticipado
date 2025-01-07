@@ -162,7 +162,7 @@ const EgresosApp = () => {
   const [usuarioRegistrado, setUsuarioRegistrado] = useState(false);
 
   // Obtener la URL del backend desde las variables de entorno
-  const backendUrl = 'https://egresoanticipado-backend.onrender.com';
+  const backendUrl = 'https://egresoanticipado.onrender.com';
   console.log('Backend URL:', backendUrl);
 
   // Obtener el día actual y verificar si es 01:00 AM o más tarde

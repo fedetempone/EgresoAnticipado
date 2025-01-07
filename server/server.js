@@ -76,7 +76,7 @@ const Turno = require('./models/Turno');
 const app = express();
 
 // Obtén el puerto desde el entorno o usa 5000 para desarrollo local
-const port = 5000
+const port = process.env.PORT || 10000;
 
 // Configura CORS (Permitir solo solicitudes de tu frontend)
 const allowedOrigins = ['https://egresoanticipado-frontend.onrender.com','http://localhost:5173'];
