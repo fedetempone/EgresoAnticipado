@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Usuario = require('../models/Usuario'); // Traemos el modelo de Usuario
+const Usuario = require('../Usuario');
 
 const router = express.Router();
 
@@ -15,7 +15,8 @@ router.post('/registro', async (req, res) => {
       return res.status(400).json({ message: 'El legajo ya está registrado' });
     }
 
-    const nuevoUsuario = new Usuario({ legajo, contraseña, email });
+    const hashedPassword = await bcrypt.hash(contraseña, 10);
+    const nuevoUsuario = new Usuario({ legajo, contraseña: hashedPassword, email });
     await nuevoUsuario.save();
     res.status(201).json({ message: 'Usuario registrado correctamente' });
   } catch (error) {

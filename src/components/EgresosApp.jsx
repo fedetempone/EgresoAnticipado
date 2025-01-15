@@ -1,5 +1,3 @@
-// EGRESOSAPP FUNCIONANDO 14/1 API TIMEZONE ZONA HORARIA ARGENTINA CONECTADA A BASE DE DATOS:
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -14,27 +12,49 @@ const EgresosApp = () => {
   const [diaActual, setDiaActual] = useState('');
   const [horaHabilitada, setHoraHabilitada] = useState(false);
   const [usuarioRegistrado, setUsuarioRegistrado] = useState(false);
-  const [horaActual, setHoraActual] = useState(null); // Estado para la hora actual
-  const [error, setError] = useState(null); // Estado para manejar el error de la API
+  const [horaActual, setHoraActual] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Obtener la URL del backend desde las variables de entorno
+  // Estado para el formulario de registro
+  const [legajo, setLegajo] = useState('');
+  const [email, setEmail] = useState('');
+  const [contraseña, setContraseña] = useState('');
+  const [registroError, setRegistroError] = useState('');
+
   const backendUrl = 'https://egreso-backend.onrender.com';
 
-  // Obtener la hora actual de Argentina desde una API externa
+  // Función para registrar al usuario
+  const registrarUsuario = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(`${backendUrl}/api/auth/registro`, {
+        legajo,
+        email,
+        contraseña,
+      });
+      alert('Usuario registrado con éxito');
+      setUsuarioRegistrado(true); // Marcar al usuario como registrado
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
+      setRegistroError(error.response?.data?.message || 'Error al registrar usuario');
+    }
+  };
+
+  // Obtener la hora de Argentina
   useEffect(() => {
     const obtenerHora = async () => {
       try {
-        // Reemplaza 'YOUR_API_KEY' con tu clave de API de TimeZoneDB
         const respuesta = await axios.get('http://api.timezonedb.com/v2.1/get-time-zone', {
           params: {
-            key: 'CW4R7HZTRQJK', // Clave de la API
+            key: 'CW4R7HZTRQJK',
             format: 'json',
             by: 'zone',
             zone: 'America/Argentina/Buenos_Aires',
-          }
+          },
         });
-        const hora = new Date(respuesta.data.formatted); // Formato de fecha y hora
-        console.log('Hora obtenida de la API:', hora); // Aquí es donde colocas el console.log
+        const hora = new Date(respuesta.data.formatted);
+        console.log('Hora obtenida de la API:', hora);
         setHoraActual(hora);
       } catch (error) {
         setError('No se pudo obtener la hora de Argentina. Intenta más tarde.');
@@ -48,61 +68,21 @@ const EgresosApp = () => {
   useEffect(() => {
     if (horaActual) {
       const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
-      const dia = diasSemana[horaActual.getDay() - 1]; // getDay() devuelve 0 para domingo
+      const dia = diasSemana[horaActual.getDay() - 1];
       setDiaActual(dia);
 
       const horaActual_ = horaActual.getHours();
       const minutosActuales = horaActual.getMinutes();
 
-      // Habilitar edición solo entre las 19:03 y 19:04
-      if ((horaActual_ > 11 || (horaActual_ === 11 && minutosActuales >= 30)) && 
-          (horaActual_ < 20 || (horaActual_ === 20 && minutosActuales <= 30))) {
-        setHoraHabilitada(true); // Habilita la edición entre las 11:30 y 20:30
+      if ((horaActual_ > 11 || (horaActual_ === 11 && minutosActuales >= 30)) &&
+        (horaActual_ < 20 || (horaActual_ === 20 && minutosActuales <= 30))) {
+        setHoraHabilitada(true);
       } else {
-        setHoraHabilitada(false); // Deshabilita fuera del rango
+        setHoraHabilitada(false);
       }
     }
   }, [horaActual]);
 
-  // Obtener la tabla desde el servidor
-  useEffect(() => {
-    axios
-      .get(`${backendUrl}/api/turnos`)
-      .then((response) => {
-        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-          const turnos = response.data[0]; // Suponiendo que solo hay un documento de turnos
-          const turnosConCeldas = {
-            Lunes: turnos.Lunes || Array(8).fill(''),
-            Martes: turnos.Martes || Array(8).fill(''),
-            Miércoles: turnos.Miércoles || Array(8).fill(''),
-            Jueves: turnos.Jueves || Array(8).fill(''),
-            Viernes: turnos.Viernes || Array(8).fill(''),
-          };
-          setTabla(turnosConCeldas);
-        } else {
-          console.error('Formato de datos no válido:', response.data);
-          setTabla({
-            Lunes: Array(8).fill(''),
-            Martes: Array(8).fill(''),
-            Miércoles: Array(8).fill(''),
-            Jueves: Array(8).fill(''),
-            Viernes: Array(8).fill(''),
-          });
-        }
-      })
-      .catch((error) => {
-        console.error('Error al obtener los turnos:', error);
-        setTabla({
-          Lunes: Array(8).fill(''),
-          Martes: Array(8).fill(''),
-          Miércoles: Array(8).fill(''),
-          Jueves: Array(8).fill(''),
-          Viernes: Array(8).fill(''),
-        });
-      });
-  }, [backendUrl]);
-
-  // Función para manejar la anotación del usuario
   const manejarAnotacion = async (filaIndex) => {
     if (!horaHabilitada || usuarioRegistrado || !diaActual) {
       alert('No puedes anotarte ahora o ya estás registrado.');
@@ -111,14 +91,12 @@ const EgresosApp = () => {
 
     const nombreUsuario = prompt('Ingresa tu nombre:');
     if (nombreUsuario) {
-      const nuevaTabla = { ...tabla }; // Hacemos una copia del objeto tabla
-
+      const nuevaTabla = { ...tabla };
       if (nuevaTabla[diaActual][filaIndex] === '') {
         nuevaTabla[diaActual][filaIndex] = nombreUsuario;
-        setTabla(nuevaTabla); // Actualizamos la tabla en el frontend
+        setTabla(nuevaTabla);
         setUsuarioRegistrado(true);
 
-        // Enviar los datos al servidor para guardarlos
         try {
           await axios.post(`${backendUrl}/api/turnos`, {
             filaIndex,
@@ -145,6 +123,36 @@ const EgresosApp = () => {
       <h1>Turnos para irse temprano</h1>
       <h2>Día actual: {diaActual || 'No disponible'}</h2>
       {!horaHabilitada && <p>La edición se habilitará entre las 19:03 y las 19:04.</p>}
+
+      {/* Formulario de Registro */}
+      {!usuarioRegistrado && (
+        <form onSubmit={registrarUsuario}>
+          <h3>Registro de Usuario</h3>
+          <input
+            type="text"
+            placeholder="Legajo"
+            value={legajo}
+            onChange={(e) => setLegajo(e.target.value)}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={contraseña}
+            onChange={(e) => setContraseña(e.target.value)}
+            required
+          />
+          <button type="submit">Registrar</button>
+        </form>
+      )}
+      {registroError && <div>{registroError}</div>}
 
       <table border="1">
         <thead>
@@ -173,14 +181,13 @@ const EgresosApp = () => {
                     pointerEvents: dia === diaActual && horaHabilitada ? 'auto' : 'none',
                   }}
                 >
-                  {tabla[dia][filaIndex]} {/* Mostrar los nombres anotados */}
+                  {tabla[dia][filaIndex]}
                 </td>
               ))}
             </tr>
           ))}
         </tbody>
       </table>
-
       <p>* Solo puedes anotarte en tu turno correspondiente. Máximo 8 personas por día.</p>
     </div>
   );

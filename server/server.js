@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const Turno = require('./models/Turno');
 const Usuario = require('./models/Usuario'); // Asegúrate de que el modelo Usuario esté correctamente importado
-const authRoutes = require('./routes/auth'); // Importar las rutas de autenticación
+const authRoutes = require('./models/routes/auth'); // Importar las rutas de autenticación
 
 const app = express();
 
@@ -175,7 +175,7 @@ app.post('/api/usuarios/recuperar', async (req, res) => {
 
 // Conectar a la base de datos MongoDB Atlas
 mongoose
-  .connect('mongodb+srv://tuusuario:tucontraseña@tudatabase.mongodb.net/egresos?retryWrites=true&w=majority')
+  .connect('mongodb+srv://fedetempo:fede2101@egresos.gmgjv.mongodb.net/?retryWrites=true&w=majority&appName=egresos')
   .then(() => console.log('Conectado a la base de datos'))
   .catch((err) => {
     console.error('Error al conectar a la base de datos:', err);
