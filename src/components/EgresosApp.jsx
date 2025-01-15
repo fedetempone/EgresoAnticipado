@@ -1,3 +1,5 @@
+// EGRESOSAPP FUNCIONANDO 14/1 API TIMEZONE ZONA HORARIA ARGENTINA CONECTADA A BASE DE DATOS:
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -12,24 +14,58 @@ const EgresosApp = () => {
   const [diaActual, setDiaActual] = useState('');
   const [horaHabilitada, setHoraHabilitada] = useState(false);
   const [usuarioRegistrado, setUsuarioRegistrado] = useState(false);
+  const [horaActual, setHoraActual] = useState(null); // Estado para la hora actual
+  const [error, setError] = useState(null); // Estado para manejar el error de la API
 
   // Obtener la URL del backend desde las variables de entorno
-  const backendUrl = 'https://egresoanticipado.onrender.com';
+  const backendUrl = 'https://egreso-backend.onrender.com';
 
-  // Obtener el día actual y verificar si es 01:00 AM o más tarde
+  // Obtener la hora actual de Argentina desde una API externa
   useEffect(() => {
-    const ahora = new Date();
-    const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
-    const dia = diasSemana[ahora.getDay() - 1]; // getDay() devuelve 0 para domingo
-    setDiaActual(dia);
+    const obtenerHora = async () => {
+      try {
+        // Reemplaza 'YOUR_API_KEY' con tu clave de API de TimeZoneDB
+        const respuesta = await axios.get('http://api.timezonedb.com/v2.1/get-time-zone', {
+          params: {
+            key: 'CW4R7HZTRQJK', // Clave de la API
+            format: 'json',
+            by: 'zone',
+            zone: 'America/Argentina/Buenos_Aires',
+          }
+        });
+        const hora = new Date(respuesta.data.formatted); // Formato de fecha y hora
+        console.log('Hora obtenida de la API:', hora); // Aquí es donde colocas el console.log
+        setHoraActual(hora);
+      } catch (error) {
+        setError('No se pudo obtener la hora de Argentina. Intenta más tarde.');
+        console.error('Error al obtener la hora:', error);
+      }
+    };
 
-    const horaActual = ahora.getHours();
-    const minutosActuales = ahora.getMinutes();
-    if (horaActual > 0 || (horaActual === 1 && minutosActuales >= 0)) {
-      setHoraHabilitada(true);
+    obtenerHora();
+  }, []);
+
+  useEffect(() => {
+    if (horaActual) {
+      const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+      const dia = diasSemana[horaActual.getDay() - 1]; // getDay() devuelve 0 para domingo
+      setDiaActual(dia);
+
+      const horaActual_ = horaActual.getHours();
+      const minutosActuales = horaActual.getMinutes();
+
+      // Habilitar edición solo entre las 19:03 y 19:04
+      if ((horaActual_ > 11 || (horaActual_ === 11 && minutosActuales >= 30)) && 
+          (horaActual_ < 20 || (horaActual_ === 20 && minutosActuales <= 30))) {
+        setHoraHabilitada(true); // Habilita la edición entre las 11:30 y 20:30
+      } else {
+        setHoraHabilitada(false); // Deshabilita fuera del rango
+      }
     }
+  }, [horaActual]);
 
-    // Obtener la tabla desde el servidor
+  // Obtener la tabla desde el servidor
+  useEffect(() => {
     axios
       .get(`${backendUrl}/api/turnos`)
       .then((response) => {
@@ -100,11 +136,15 @@ const EgresosApp = () => {
     }
   };
 
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div>
       <h1>Turnos para irse temprano</h1>
       <h2>Día actual: {diaActual || 'No disponible'}</h2>
-      {!horaHabilitada && <p>La edición se habilitará a la 01:00 AM.</p>}
+      {!horaHabilitada && <p>La edición se habilitará entre las 19:03 y las 19:04.</p>}
 
       <table border="1">
         <thead>
