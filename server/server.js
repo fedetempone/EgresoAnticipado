@@ -12,19 +12,14 @@ const Turno = require('./models/Turno');
 const Usuario = require('./models/Usuario'); // Asegúrate de que el modelo Usuario esté correctamente importado
 const authRoutes = require('./models/routes/auth'); // Importar las rutas de autenticación
 
-app.use(cors());
-
-const app = express();
-
-// Obtén el puerto desde el entorno o usa 5000 para desarrollo local
-const port = process.env.PORT || 10000;
+const app = express(); // Inicializar Express
 
 // Configura CORS (Permitir solo solicitudes de tu frontend)
-const allowedOrigins = ['http://localhost:5173', 'https://egreso-backend.onrender.com/'];  // Permitir ambos orígenes
+const allowedOrigins = ['http://localhost:5173', 'https://egreso-backend.onrender.com/'];
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true); // Permitir la solicitud si el origen está en la lista
+      callback(null, true); // Permitir si el origen está en la lista
     } else {
       callback(new Error('No permitido por CORS')); // Rechazar otros orígenes
     }
@@ -193,6 +188,7 @@ mongoose
   });
 
 // Iniciar el servidor
+const port = process.env.PORT || 10000;
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
