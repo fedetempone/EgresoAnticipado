@@ -100,6 +100,17 @@ const bcrypt = require('bcryptjs');
 const Usuario = require('../Usuario');
 const router = express.Router();
 
+// Obtener todos los usuarios
+router.get('/usuarios', async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    res.status(200).json(usuarios);
+  } catch (error) {
+    console.error('Error al obtener los usuarios:', error);
+    res.status(500).json({ message: 'Error al obtener los usuarios' });
+  }
+});
+
 // Validación del legajo para ver si el usuario puede actualizar su información
 router.post('/usuarios/validar-legajo', async (req, res) => {
   const { legajo } = req.body;
