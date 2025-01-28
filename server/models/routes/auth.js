@@ -97,7 +97,7 @@
 
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const Usuario = require('../models/Usuario');
+const Usuario = require('../Usuario');
 const router = express.Router();
 
 // Validación del legajo para ver si el usuario puede actualizar su información
