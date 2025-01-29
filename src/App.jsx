@@ -1,21 +1,27 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import EgresosApp from './components/EgresosApp';
-import Login from './components/Login';
-import Registro from './components/Registro';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import EgresosApp from './componentes/EgresosApp';
+import Login from './componentes/Login';
+import Registro from './componentes/Registro';
 
 function App() {
-  // Supongamos que tienes algún tipo de estado que guarda si el usuario está autenticado
-  const isAuthenticated = false; // Aquí deberías usar un estado o contexto que maneje la autenticación
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Verificar si el usuario tiene un token en localStorage
+    const token = localStorage.getItem('authToken');
+    setIsAuthenticated(!!token);
+  }, []);
 
   return (
     <Router>
       <div className="App">
         <Routes>
           {/* Si el usuario está autenticado, lo dirigimos a la app */}
-          <Route path="/" element={isAuthenticated ? <EgresosApp /> : <Login />} />
+          <Route path="/" element={isAuthenticated ? <EgresosApp /> : <Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
+          <Route path="/turnos" element={isAuthenticated ? <EgresosApp /> : <Navigate to="/login" />} />
         </Routes>
       </div>
     </Router>
@@ -23,3 +29,4 @@ function App() {
 }
 
 export default App;
+

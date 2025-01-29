@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';  // Asegúrate de importar useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [legajo, setLegajo] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [mensaje, setMensaje] = useState('');
-  const navigate = useNavigate();  // Este hook se usa para la navegación
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,10 +15,27 @@ const Login = () => {
         legajo,
         contraseña,
       });
-      localStorage.setItem('authToken', response.data.token);  // Guarda el token en localStorage
+
+      const data = response.data;
+
+      if (data.error) {
+        setMensaje(data.error);
+        return;
+      }
+
+      if (data.redirigirRegistro) {
+        setMensaje('Debes registrar una contraseña primero');
+        setTimeout(() => {
+          navigate('/registro');
+        }, 2000);
+        return;
+      }
+
+      // Si el login es exitoso
+      localStorage.setItem('authToken', data.token);
       setMensaje('Login exitoso');
       setTimeout(() => {
-        navigate('/');  // Redirige a la página de turnos (o a la ruta que corresponda)
+        navigate('/turnos');
       }, 2000);
     } catch (error) {
       setMensaje('Error al hacer login');
@@ -52,4 +69,3 @@ const Login = () => {
 };
 
 export default Login;
-
