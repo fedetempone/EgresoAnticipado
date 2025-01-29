@@ -18,16 +18,13 @@ const Login = () => {
 
       const data = response.data;
 
-      if (data.error) {
-        setMensaje(data.error);
+      if (data.message === 'Legajo no encontrado') {
+        setMensaje('El legajo ingresado no existe');
         return;
       }
 
-      if (data.redirigirRegistro) {
-        setMensaje('Debes registrar una contraseña primero');
-        setTimeout(() => {
-          navigate('/registro');
-        }, 2000);
+      if (data.message === 'Contraseña incorrecta') {
+        setMensaje('La contraseña es incorrecta');
         return;
       }
 

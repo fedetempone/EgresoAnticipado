@@ -181,6 +181,7 @@ const Registro = () => {
     }
 
     try {
+      // Registramos el usuario directamente sin encriptación de contraseñas
       await axios.put(`https://egreso-backend.onrender.com/api/auth/usuarios/${legajo}`, {
         email,
         contraseña,
@@ -264,4 +265,5 @@ const Registro = () => {
 };
 
 export default Registro;
+
 

@@ -96,7 +96,6 @@
 // module.exports = router;
 
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const Usuario = require('../Usuario');
 const router = express.Router();
 
@@ -159,9 +158,8 @@ router.put('/usuarios/:legajo', async (req, res) => {
     // Actualizar el email
     usuario.email = email;
 
-    // Hashear y actualizar la contraseña
-    const hashedPassword = await bcrypt.hash(contraseña, 10);
-    usuario.contraseña = hashedPassword;
+    // Actualizar la contraseña sin encriptación
+    usuario.contraseña = contraseña;
 
     // Guardar los cambios en la base de datos
     await usuario.save();
@@ -176,6 +174,7 @@ router.put('/usuarios/:legajo', async (req, res) => {
 // Ruta para login
 router.post('/login', async (req, res) => {
   const { legajo, contraseña } = req.body;
+  console.log("Login recibido:", { legajo, contraseña });
 
   try {
     const usuario = await Usuario.findOne({ legajo });
@@ -184,14 +183,15 @@ router.post('/login', async (req, res) => {
       return res.status(404).json({ message: 'Legajo no encontrado' });
     }
 
-    // Verificar la contraseña
-    const isMatch = await bcrypt.compare(contraseña, usuario.contraseña);
-    if (!isMatch) {
+    console.log('Usuario encontrado:', usuario);
+
+    // Verificar la contraseña sin encriptación
+    if (usuario.contraseña !== contraseña) {
       return res.status(400).json({ message: 'Contraseña incorrecta' });
     }
 
-    // Si la contraseña es correcta, devolver una respuesta exitosa
-    res.status(200).json({ message: 'Login exitoso', usuario: usuario });
+    // Si la contraseña es correcta
+    res.status(200).json({ message: 'Login exitoso', token: 'some-jwt-token' });
 
   } catch (error) {
     console.error('Error al hacer login:', error);
