@@ -204,7 +204,7 @@ const authRoutes = require('./models/routes/auth'); // Importar las rutas de aut
 const app = express();
 
 // Configura CORS
-const allowedOrigins = ['http://localhost:5173', 'https://egreso-backend.onrender.com'];
+const allowedOrigins = ['http://localhost:5173', 'https://egreso-backend.onrender.com' ,'https://egresoanticipado-frontend.onrender.com'];
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
