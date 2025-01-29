@@ -173,5 +173,32 @@ router.put('/usuarios/:legajo', async (req, res) => {
   }
 });
 
+// Ruta para login
+router.post('/login', async (req, res) => {
+  const { legajo, contraseña } = req.body;
+
+  try {
+    const usuario = await Usuario.findOne({ legajo });
+
+    if (!usuario) {
+      return res.status(404).json({ message: 'Legajo no encontrado' });
+    }
+
+    // Verificar la contraseña
+    const isMatch = await bcrypt.compare(contraseña, usuario.contraseña);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Contraseña incorrecta' });
+    }
+
+    // Si la contraseña es correcta, devolver una respuesta exitosa
+    res.status(200).json({ message: 'Login exitoso', usuario: usuario });
+
+  } catch (error) {
+    console.error('Error al hacer login:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+});
+
 // Exportar el router
 module.exports = router;
+
