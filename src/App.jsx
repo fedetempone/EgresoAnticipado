@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import EgresosApp from './components/EgresosApp'
-import Login from './componentes/Login';
+import Login from './components/Login'
 import Registro from './components/Registro';
 
 function App() {
