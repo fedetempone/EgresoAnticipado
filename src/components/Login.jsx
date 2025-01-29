@@ -28,6 +28,12 @@ const Login = () => {
         return;
       }
 
+      if (data.message === 'Legajo sin contraseña') {
+        setMensaje('El legajo no está registrado. Por favor, regístrese.');
+        navigate('/registro'); // Redirige al formulario de registro
+        return;
+      }
+
       // Si el login es exitoso
       localStorage.setItem('authToken', data.token);
       setMensaje('Login exitoso');

@@ -185,6 +185,11 @@ router.post('/login', async (req, res) => {
 
     console.log('Usuario encontrado:', usuario);
 
+    // Si el usuario tiene contraseña null, se redirige al formulario de registro
+    if (usuario.contraseña === null) {
+      return res.status(400).json({ message: 'Legajo sin contraseña. Por favor, regístrese.' });
+    }
+
     // Verificar la contraseña sin encriptación
     if (usuario.contraseña !== contraseña) {
       return res.status(400).json({ message: 'Contraseña incorrecta' });
@@ -201,4 +206,6 @@ router.post('/login', async (req, res) => {
 
 // Exportar el router
 module.exports = router;
+
+
 
