@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import EgresosApp from './componentes/EgresosApp';
+import EgresosApp from './components/EgresosApp'
 import Login from './componentes/Login';
-import Registro from './componentes/Registro';
+import Registro from './components/Registro';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
