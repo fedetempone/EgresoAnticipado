@@ -123,37 +123,6 @@ const EgresosApp = () => {
       <h1>Turnos para irse temprano</h1>
       <h2>Día actual: {diaActual || 'No disponible'}</h2>
       {!horaHabilitada && <p>La edición se habilitará entre las 19:03 y las 19:04.</p>}
-
-      {/* Formulario de Registro */}
-      {!usuarioRegistrado && (
-        <form onSubmit={registrarUsuario}>
-          <h3>Registro de Usuario</h3>
-          <input
-            type="text"
-            placeholder="Legajo"
-            value={legajo}
-            onChange={(e) => setLegajo(e.target.value)}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={contraseña}
-            onChange={(e) => setContraseña(e.target.value)}
-            required
-          />
-          <button type="submit">Registrar</button>
-        </form>
-      )}
-      {registroError && <div>{registroError}</div>}
-
       <table border="1">
         <thead>
           <tr>
@@ -194,3 +163,4 @@ const EgresosApp = () => {
 };
 
 export default EgresosApp;
+
