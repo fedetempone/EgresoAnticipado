@@ -22,7 +22,7 @@ const EgresosApp = () => {
   useEffect(() => {
     const obtenerHora = async () => {
       try {
-        const respuesta = await axios.get('http://api.timezonedb.com/v2.1/get-time-zone', {
+        const respuesta = await axios.get('https://api.timezonedb.com/v2.1/get-time-zone', {
           params: {
             key: 'CW4R7HZTRQJK', // Clave de la API
             format: 'json',
