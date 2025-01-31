@@ -36,12 +36,12 @@ const Login = () => {
 
       // Si el login es exitoso
       localStorage.setItem('authToken', data.token);
-      setMensaje('Login exitoso');
+      setMensaje('Login exitoso. Aguarde y podra agendar su turno...');
       setTimeout(() => {
         navigate('/turnos');
       }, 2000);
     } catch (error) {
-      setMensaje('Error al hacer login');
+      setMensaje('El usuario  y la contraseña no coinciden');
       console.error('Error al hacer login', error);
     }
   };

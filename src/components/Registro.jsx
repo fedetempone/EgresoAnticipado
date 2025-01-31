@@ -213,9 +213,20 @@ const Registro = () => {
     }
   };
 
+  // Validar email con REGEX
+  const validarEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
   // Función para manejar el registro
   const handleRegistro = async (e) => {
     e.preventDefault();
+
+    if (!validarEmail(email)) {
+      setMensaje('El email no es válido.');
+      return;
+    }
 
     if (!usuarioNuevo) {
       setMensaje('Primero debe validar el legajo.');
@@ -267,13 +278,17 @@ const Registro = () => {
                 id="legajo"
                 value={legajo}
                 onChange={(e) => setLegajo(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault(); // Evita que el formulario se envíe
+                    validarLegajo();
+                  }
+                }}
                 required
               />
             </div>
             <div>
-              <button type="button" onClick={validarLegajo}>
-                Validar Legajo
-              </button>
+              <button type="button" onClick={validarLegajo}>Validar Legajo</button>
             </div>
           </>
         )}
@@ -287,11 +302,15 @@ const Registro = () => {
               id="codigo"
               value={codigo}
               onChange={(e) => setCodigo(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault(); // Evita que el formulario se envíe
+                  verificarCodigo();
+                }
+              }}
               required
             />
-            <button type="button" onClick={verificarCodigo}>
-              Verificar Código
-            </button>
+            <button type="button" onClick={verificarCodigo}>Verificar Código</button>
           </div>
         )}
 
@@ -316,6 +335,7 @@ const Registro = () => {
                 id="contraseña"
                 value={contraseña}
                 onChange={(e) => setContraseña(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleRegistro(e)}
                 required
               />
             </div>
@@ -327,10 +347,10 @@ const Registro = () => {
                 id="confirmarContraseña"
                 value={confirmarContraseña}
                 onChange={(e) => setConfirmarContraseña(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleRegistro(e)}
                 required
               />
             </div>
-
             <button type="submit">Registrar</button>
           </>
         )}
