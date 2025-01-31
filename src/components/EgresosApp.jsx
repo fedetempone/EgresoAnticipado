@@ -311,7 +311,7 @@ const EgresosApp = () => {
     <div>
       <h1>Turnos para irse temprano</h1>
       <h2>Día actual: {diaActual || 'No disponible'}</h2>
-      {!horaHabilitada && <p>La edición se habilitará entre las 19:03 y las 19:04.</p>}
+      {!horaHabilitada && <p>La edición se habilitará entre las 11:30 AM y las 8:30 PM.</p>}
       <table border="1">
         <thead>
           <tr>
@@ -352,4 +352,5 @@ const EgresosApp = () => {
 };
 
 export default EgresosApp;
+
 
