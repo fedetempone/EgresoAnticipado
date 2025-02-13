@@ -35,6 +35,7 @@ const Login = () => {
       }
 
       // Si el login es exitoso
+      
       localStorage.setItem('authToken', data.token);
       setMensaje('Login exitoso. Aguarde y podra agendar su turno...');
       setTimeout(() => {
