@@ -267,29 +267,53 @@ const EgresosApp = () => {
   // useEffect(() => {
   //   axios.get(`${backendUrl}/api/turnos`)
   //     .then((response) => {
-  //       if (response.data.length > 0) {
-  //         setTabla(response.data[0]);
+  //       console.log("Respuesta de la API:", response);
+        
+  //       // Verifica si los turnos existen dentro de la respuesta
+  //       const turnos = response.data;
+  //       if (turnos && turnos.Lunes) {
+  //         console.log("Datos de turnos obtenidos:", turnos);
+  //         setTabla(turnos); // Asignamos los datos directamente a la tabla
+  //       } else {
+  //         console.log("No se encontraron turnos en la base de datos.");
+  //         setError('No se encontraron turnos en la base de datos.');
   //       }
   //     })
-  //     .catch((error) => console.error('Error al obtener los turnos:', error));
+  //     .catch((error) => {
+  //       console.error('Error al obtener los turnos:', error);
+  //       setError('Error al obtener los turnos.');
+  //     });
   // }, [backendUrl]);
+  
   useEffect(() => {
     axios.get(`${backendUrl}/api/turnos`)
       .then((response) => {
         console.log("Respuesta de la API:", response);
-        if (response.data && response.data.length > 0) {
-          // Verifica si los datos contienen los turnos correctamente
-          const turnos = response.data[0]; // Se asume que el primer objeto contiene los turnos
-          console.log("Datos de turnos obtenidos:", turnos);
   
-          // Verifica la estructura del objeto de turnos
-          console.log("Estructura de los turnos:", Object.keys(turnos));
+        const turnos = response.data;
+        const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+        
+        // Verificar si los días existen en la respuesta y recorrerlos
+        const turnosDisponibles = {};
+        let turnosValidados = true;
   
-          // Asigna los datos al estado de la tabla
-          setTabla(turnos);
+        // Recorrer todos los días de la semana
+        diasSemana.forEach((dia) => {
+          if (turnos[dia]) {
+            turnosDisponibles[dia] = turnos[dia];
+          } else {
+            turnosValidados = false;
+            console.log(`Faltan datos para el día: ${dia}`);
+          }
+        });
+  
+        // Si todos los días tienen datos válidos, actualizamos el estado
+        if (turnosValidados) {
+          console.log("Turnos validados correctamente:", turnosDisponibles);
+          setTabla(turnosDisponibles);  // Asignamos todos los turnos de la semana
         } else {
-          console.log("No se encontraron turnos en la base de datos.");
-          setError('No se encontraron turnos en la base de datos.');
+          console.log("No todos los días tienen turnos.");
+          setError('No se encontraron turnos completos en la base de datos.');
         }
       })
       .catch((error) => {
@@ -297,6 +321,7 @@ const EgresosApp = () => {
         setError('Error al obtener los turnos.');
       });
   }, [backendUrl]);
+  
   
   
 
