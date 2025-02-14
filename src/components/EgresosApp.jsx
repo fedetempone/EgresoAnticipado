@@ -264,15 +264,41 @@ const EgresosApp = () => {
     }
   }, [horaActual]);
 
+  // useEffect(() => {
+  //   axios.get(`${backendUrl}/api/turnos`)
+  //     .then((response) => {
+  //       if (response.data.length > 0) {
+  //         setTabla(response.data[0]);
+  //       }
+  //     })
+  //     .catch((error) => console.error('Error al obtener los turnos:', error));
+  // }, [backendUrl]);
   useEffect(() => {
     axios.get(`${backendUrl}/api/turnos`)
       .then((response) => {
-        if (response.data.length > 0) {
-          setTabla(response.data[0]);
+        console.log("Respuesta de la API:", response);
+        if (response.data && response.data.length > 0) {
+          // Verifica si los datos contienen los turnos correctamente
+          const turnos = response.data[0]; // Se asume que el primer objeto contiene los turnos
+          console.log("Datos de turnos obtenidos:", turnos);
+  
+          // Verifica la estructura del objeto de turnos
+          console.log("Estructura de los turnos:", Object.keys(turnos));
+  
+          // Asigna los datos al estado de la tabla
+          setTabla(turnos);
+        } else {
+          console.log("No se encontraron turnos en la base de datos.");
+          setError('No se encontraron turnos en la base de datos.');
         }
       })
-      .catch((error) => console.error('Error al obtener los turnos:', error));
+      .catch((error) => {
+        console.error('Error al obtener los turnos:', error);
+        setError('Error al obtener los turnos.');
+      });
   }, [backendUrl]);
+  
+  
 
   const manejarAnotacion = async (filaIndex, hora) => {
     if (!horaHabilitada || usuarioRegistrado || !diaActual) {
