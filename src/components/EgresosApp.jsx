@@ -428,16 +428,39 @@ const EgresosApp = () => {
   }, [horaActual]);
 
   // Obtener la tabla de turnos desde el backend
+  // useEffect(() => {
+  //   axios.get(`${backendUrl}/api/turnos`)
+  //     .then((response) => {
+  //       if (response.data.length > 0) {
+  //         setTabla(response.data[0]);
+  //         // Cargar el estado de usuarioRegistrado desde localStorage
+  //         const registrado = localStorage.getItem('usuarioRegistrado');
+  //         if (registrado === 'true') {
+  //           setUsuarioRegistrado(true);
+  //         }
+  //       }
+  //     })
+  //     .catch((error) => console.error('Error al obtener los turnos:', error));
+  // }, [backendUrl]);
+
   useEffect(() => {
     axios.get(`${backendUrl}/api/turnos`)
       .then((response) => {
-        if (response.data.length > 0) {
-          setTabla(response.data[0]);
-          // Cargar el estado de usuarioRegistrado desde localStorage
-          const registrado = localStorage.getItem('usuarioRegistrado');
-          if (registrado === 'true') {
-            setUsuarioRegistrado(true);
-          }
+        console.log('Datos de turnos recibidos:', response.data);
+  
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          const turnos = response.data[0]; // Si es un array, tomar el primer objeto
+  
+          // Validar que tiene los días de la semana
+          const nuevaTabla = {
+            Lunes: turnos.Lunes || Array(8).fill(''),
+            Martes: turnos.Martes || Array(8).fill(''),
+            Miércoles: turnos.Miércoles || Array(8).fill(''),
+            Jueves: turnos.Jueves || Array(8).fill(''),
+            Viernes: turnos.Viernes || Array(8).fill(''),
+          };
+  
+          setTabla(nuevaTabla);
         }
       })
       .catch((error) => console.error('Error al obtener los turnos:', error));
@@ -467,33 +490,33 @@ const EgresosApp = () => {
 
   const manejarAnotacion = async (filaIndex, hora) => {
     console.log('Manejando anotación...', { filaIndex, hora, diaActual, usuarioRegistrado });
-
+  
     if (!horaHabilitada || usuarioRegistrado || !diaActual) {
       console.log('No permitido, hora habilitada:', horaHabilitada, 'Usuario registrado:', usuarioRegistrado, 'Día actual:', diaActual);
       alert('No puedes anotarte ahora o ya estás registrado.');
       return;
     }
-
+  
     const nombreUsuario = prompt('Ingresa tu nombre:');
     console.log('Nombre ingresado por usuario:', nombreUsuario);
-
+  
     if (nombreUsuario) {
       const nuevaTabla = { ...tabla };
       if (nuevaTabla[diaActual][filaIndex] === '') {
         // Verificar si el usuario ya tiene un turno registrado
         const turnos = await axios.get(`${backendUrl}/api/turnos`);
         console.log('Turnos obtenidos desde backend:', turnos.data);
-
-        const turnoExistente = turnos.data.find(turno =>
-          turno[diaActual].includes(nombreUsuario)
+  
+        const turnoExistente = Object.values(turnos.data).some(dia =>
+          dia.some(turno => turno.split(' ')[0] === nombreUsuario) // Compara solo el nombre sin la hora
         );
-
+  
         if (turnoExistente) {
           console.log('Turno ya registrado:', turnoExistente);
           alert('Ya tienes un turno registrado.');
           return;
         }
-
+  
         // Concatenar nombre con hora y guardarlo en la base de datos
         nuevaTabla[diaActual][filaIndex] = `${nombreUsuario} ${hora}`;
         setTabla(nuevaTabla);
@@ -501,7 +524,7 @@ const EgresosApp = () => {
         
         // Guardar el estado en localStorage
         localStorage.setItem('usuarioRegistrado', 'true');
-
+  
         try {
           console.log('Enviando datos al backend:', { filaIndex, dia: diaActual, nombre: `${nombreUsuario} ${hora}` });
           await axios.post(`${backendUrl}/api/turnos`, { filaIndex, dia: diaActual, nombre: `${nombreUsuario} ${hora}` });
@@ -515,7 +538,7 @@ const EgresosApp = () => {
         alert('Este turno ya está ocupado. Por favor, selecciona otro.');
       }
     }
-  };
+  };  
 
   const handleSelectChange = (event, filaIndex) => {
     const horaSeleccionada = event.target.value;
