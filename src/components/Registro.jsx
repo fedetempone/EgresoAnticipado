@@ -249,6 +249,7 @@ const Registro = () => {
     }
 
     try {
+      // console.log('usuaruoi de registro.jsx', usuario);
       await axios.put(`https://egreso-backend.onrender.com/api/auth/usuarios/${legajo}`, {
         email,
         contraseña,
