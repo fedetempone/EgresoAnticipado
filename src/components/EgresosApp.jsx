@@ -61,31 +61,67 @@ const EgresosApp = () => {
     }
   }, [horaActual]);
 
+  // useEffect(() => {
+  //   axios.get(`${backendUrl}/api/turnos`)
+  //     .then((response) => {
+  //       const turnos = response.data;
+  //       const diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
+
+  //       const turnosDisponibles = {};
+  //       let turnosValidados = true;
+
+  //       diasSemana.forEach((dia) => {
+  //         if (turnos[dia]) {
+  //           turnosDisponibles[dia] = turnos[dia];
+  //         } else {
+  //           turnosValidados = false;
+  //           console.log(`Faltan datos para el día: ${dia}`);
+  //         }
+  //       });
+
+  //       if (turnosValidados) {
+  //         setTabla(turnosDisponibles);
+  //       } else {
+  //         setError('No se encontraron turnos completos en la base de datos.');
+  //       }
+  //     })
+  //     .catch(() => {
+  //       setError('Error al obtener los turnos.');
+  //     });
+  // }, [backendUrl]);
   useEffect(() => {
+    console.log('Consultando los turnos desde el frontend...');  // Log inicial cuando se hace la solicitud
+  
     axios.get(`${backendUrl}/api/turnos`)
       .then((response) => {
         const turnos = response.data;
         const diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
-
+  
+        console.log('Datos obtenidos desde el backend:', turnos); // Verificar los datos obtenidos desde el backend
+  
         const turnosDisponibles = {};
         let turnosValidados = true;
-
+  
         diasSemana.forEach((dia) => {
           if (turnos[dia]) {
             turnosDisponibles[dia] = turnos[dia];
+            console.log(`Turnos para el día ${dia}:`, turnos[dia]); // Verificar los turnos para cada día
           } else {
             turnosValidados = false;
-            console.log(`Faltan datos para el día: ${dia}`);
+            console.log(`Faltan datos para el día: ${dia}`);  // Si faltan turnos para algún día, logueamos este mensaje
           }
         });
-
+  
         if (turnosValidados) {
+          console.log('Todos los turnos están completos, actualizando la tabla.');  // Log cuando todos los turnos son válidos
           setTabla(turnosDisponibles);
         } else {
+          console.log('No todos los turnos están completos.');  // Log si hay datos faltantes
           setError('No se encontraron turnos completos en la base de datos.');
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error('Error al obtener los turnos:', error);  // Log de error en caso de que falle la solicitud
         setError('Error al obtener los turnos.');
       });
   }, [backendUrl]);
