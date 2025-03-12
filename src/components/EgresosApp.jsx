@@ -155,6 +155,29 @@ const EgresosApp = () => {
     }
   };
   
+  // useEffect(() => {
+  //   const turnoGuardadoEnLocalStorage = JSON.parse(localStorage.getItem('turno'));
+  //   const legajo = localStorage.getItem('legajo');
+  
+  //   if (turnoGuardadoEnLocalStorage && legajo) {
+  //     console.log("el dia actual es:", diaActual);
+  //     axios.get(`${backendUrl}/api/turnos/${diaActual}`)
+  //       .then((response) => {
+  //         const turnosDelDia = response.data;
+          
+  //         // Verificar si el usuario sigue en la base de datos
+  //         const turnoExiste = turnosDelDia.some(turno => turno.includes(usuario));
+  
+  //         if (!turnoExiste) {
+  //           localStorage.removeItem('turno'); // Eliminar turno si ya no existe en la base de datos
+  //           setTurnoGuardado(false);
+  //         }
+  //       })
+  //       .catch(() => {
+  //         setError('Error al verificar el turno en la base de datos.');
+  //       });
+  //   }
+  // }, [diaActual, usuario]);
   useEffect(() => {
     const turnoGuardadoEnLocalStorage = JSON.parse(localStorage.getItem('turno'));
     const legajo = localStorage.getItem('legajo');
@@ -163,14 +186,19 @@ const EgresosApp = () => {
       console.log("el dia actual es:", diaActual);
       axios.get(`${backendUrl}/api/turnos/${diaActual}`)
         .then((response) => {
-          const turnosDelDia = response.data;
-          
-          // Verificar si el usuario sigue en la base de datos
-          const turnoExiste = turnosDelDia.some(turno => turno.includes(usuario));
+          const turnosDelDia = response.data[diaActual]; // Accedemos al array de turnos del día actual
   
-          if (!turnoExiste) {
-            localStorage.removeItem('turno'); // Eliminar turno si ya no existe en la base de datos
-            setTurnoGuardado(false);
+          if (turnosDelDia) {
+            // Verificar si el usuario sigue en la base de datos
+            const turnoExiste = turnosDelDia.some(turno => turno.includes(usuario));
+  
+            if (!turnoExiste) {
+              localStorage.removeItem('turno'); // Eliminar turno si ya no existe en la base de datos
+              setTurnoGuardado(false);
+            }
+          } else {
+            console.error('No se encontraron turnos para el día actual');
+            setError('Error al verificar el turno en la base de datos.');
           }
         })
         .catch(() => {
