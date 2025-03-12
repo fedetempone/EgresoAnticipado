@@ -8,10 +8,25 @@ import LandingPage from './components/LandingPage';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // useEffect(() => {
+  //   // Verificar si el usuario tiene un token en localStorage
+  //   const token = localStorage.getItem('authToken');
+  //   setIsAuthenticated(!!token);
+  // }, []);
+
   useEffect(() => {
-    // Verificar si el usuario tiene un token en localStorage
-    const token = localStorage.getItem('authToken');
-    setIsAuthenticated(!!token);
+    const checkAuth = () => {
+      const token = localStorage.getItem('authToken');
+      setIsAuthenticated(!!token);
+    };
+  
+    checkAuth(); // Verifica al inicio
+  
+    window.addEventListener('storage', checkAuth); // Escucha cambios en localStorage
+  
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+    };
   }, []);
 
   return (

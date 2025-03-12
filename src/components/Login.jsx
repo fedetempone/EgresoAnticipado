@@ -180,6 +180,9 @@ const Login = () => {
         } else {
           setMensaje('Login exitoso. Aguarde y podrá agendar su turno...');
           setTimeout(() => {
+            console.log('Redirigiendo a /turnos...');
+            console.log('Token actual:', localStorage.getItem('authToken'));
+            console.log('Usuario actual:', localStorage.getItem('usuario'));
             navigate('/turnos');
           }, 2000);
         }
