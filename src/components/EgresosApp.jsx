@@ -5,7 +5,7 @@ const EgresosApp = () => {
   const [tabla, setTabla] = useState({
     Lunes: Array(8).fill(''),
     Martes: Array(8).fill(''),
-    Miércoles: Array(8).fill(''),
+    Miercoles: Array(8).fill(''),
     Jueves: Array(8).fill(''),
     Viernes: Array(8).fill(''),
   });
@@ -45,7 +45,7 @@ const EgresosApp = () => {
 
   useEffect(() => {
     if (horaActual) {
-      const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+      const diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
       const dia = diasSemana[horaActual.getDay() - 1];
       setDiaActual(dia);
       const hora_ = horaActual.getHours();
@@ -62,7 +62,7 @@ const EgresosApp = () => {
     axios.get(`${backendUrl}/api/turnos`)
       .then((response) => {
         const turnos = response.data;
-        const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+        const diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
 
         const turnosDisponibles = {};
         let turnosValidados = true;
@@ -188,7 +188,7 @@ const EgresosApp = () => {
           <tr>
             <th>Lunes</th>
             <th>Martes</th>
-            <th>Miércoles</th>
+            <th>Miercoles</th>
             <th>Jueves</th>
             <th>Viernes</th>
           </tr>
@@ -196,7 +196,7 @@ const EgresosApp = () => {
         <tbody>
           {Array.from({ length: 8 }).map((_, filaIndex) => (
             <tr key={filaIndex}>
-              {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'].map((dia) => (
+              {['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'].map((dia) => (
                 <td key={dia} style={{
                   backgroundColor: dia === diaActual && tabla[dia][filaIndex] === '' && horaHabilitada ? 'lightgreen' : 'lightgrey',
                   pointerEvents: dia === diaActual && horaHabilitada ? 'auto' : 'none',
