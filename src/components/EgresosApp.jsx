@@ -33,6 +33,7 @@ const EgresosApp = () => {
           }
         });
         const hora = new Date(respuesta.data.formatted);
+        console.log('la hora actual es:' , hora);
         setHoraActual(hora);
       } catch (error) {
         setError('No se pudo obtener la hora de Argentina. Intenta más tarde.');
@@ -50,6 +51,8 @@ const EgresosApp = () => {
       setDiaActual(dia);
       const hora_ = horaActual.getHours();
       const minutos = horaActual.getMinutes();
+      console.log('dias semana es:' , diasSemana);
+      console.log('dia es:' , dia);
       if ((hora_ > 11 || (hora_ === 11 && minutos >= 30)) && (hora_ < 20 || (hora_ === 20 && minutos <= 30))) {
         setHoraHabilitada(true);
       } else {
@@ -157,6 +160,7 @@ const EgresosApp = () => {
     const legajo = localStorage.getItem('legajo');
   
     if (turnoGuardadoEnLocalStorage && legajo) {
+      console.log("el dia actual es:", diaActual);
       axios.get(`${backendUrl}/api/turnos/${diaActual}`)
         .then((response) => {
           const turnosDelDia = response.data;
