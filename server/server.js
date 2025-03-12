@@ -54,7 +54,7 @@ app.post('/api/turnos', async (req, res) => {
       turnos = new Turno({
         Lunes: Array(8).fill(''),
         Martes: Array(8).fill(''),
-        Miércoles: Array(8).fill(''),
+        Miercoles: Array(8).fill(''),
         Jueves: Array(8).fill(''),
         Viernes: Array(8).fill(''),
       });
