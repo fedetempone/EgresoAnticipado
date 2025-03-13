@@ -188,20 +188,16 @@ app.post('/api/turnos', async (req, res) => {
 
     // Verificar si el nombre ya está registrado en el turno para ese día y fila
     const turnoExistente = turnos[dia].find(turno => turno.includes(nombre));
-    console.log('Turno existente en la base de datos:', turnoExistente);  // Agregar log
 
     if (turnoExistente) {
-      console.log('Este usuario ya tiene un turno registrado');
       return res.status(400).json({ message: 'Este usuario ya tiene un turno registrado' });
     }
 
     if (turnos[dia][filaIndex] === '') {
       turnos[dia][filaIndex] = nombre;
       await turnos.save();
-      console.log('Turno guardado en la base de datos:', turnos);  // Agregar log
       res.status(200).json({ message: 'Turno guardado con éxito' });
     } else {
-      console.log('Este turno ya está ocupado.');
       res.status(400).json({ message: 'Este turno ya está ocupado' });
     }
   } catch (error) {

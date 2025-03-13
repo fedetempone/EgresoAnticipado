@@ -37,16 +37,12 @@ router.post('/usuarios/validar-legajo', async (req, res) => {
 // Ruta para login
 router.post('/login', async (req, res) => {
   const { legajo, contraseña } = req.body;
-  console.log("Login recibido:", { legajo, contraseña });
-
   try {
     const usuario = await Usuario.findOne({ legajo });
 
     if (!usuario) {
       return res.status(404).json({ message: 'Legajo no encontrado' });
     }
-
-    console.log('Usuario encontrado:', usuario);
 
     // Si el usuario tiene contraseña null, se redirige al formulario de registro
     if (usuario.contraseña === null) {
@@ -120,13 +116,8 @@ router.post('/turnos/confirmar', async (req, res) => {
 // Obtener usuario por legajo
 router.get('/usuarios/:legajo', async (req, res) => {
   const { legajo } = req.params;
-  console.log(legajo);
-
   try {
     const usuario = await Usuario.findOne({ legajo });
-
-    console.log(usuario);
-
     if (!usuario) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
@@ -142,8 +133,6 @@ router.get('/usuarios/:legajo', async (req, res) => {
 router.put('/usuarios/:legajo', async (req, res) => {
   const { legajo } = req.params;  // Legajo del usuario que queremos actualizar
   const { email, contraseña } = req.body;  // Los nuevos datos
-  console.log(`Intentando actualizar los datos del usuario con legajo: ${legajo}`);
-  console.log(`Datos recibidos: email = ${email}, contraseña = ${contraseña}`);
 
   try {
     // Buscamos al usuario por legajo y lo actualizamos
@@ -154,11 +143,8 @@ router.put('/usuarios/:legajo', async (req, res) => {
     );
 
     if (!usuario) {
-      console.log(`Usuario con legajo ${legajo} no encontrado.`);
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-
-    console.log(`Usuario actualizado: ${JSON.stringify(usuario)}`);
     res.status(200).json(usuario);  // Devolver el usuario actualizado
   } catch (error) {
     console.error('Error al actualizar el usuario:', error);
