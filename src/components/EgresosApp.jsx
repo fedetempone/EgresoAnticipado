@@ -114,6 +114,7 @@ const EgresosApp = () => {
   };
 
   const confirmarTurno = async () => {
+    console.log('el dia acutal es: ',diaActual);
     if (filaSeleccionada === null || filaSeleccionada === undefined || !horaSeleccionada || !usuario) {
       alert('Selecciona una hora antes de confirmar.');
       return;
@@ -232,3 +233,4 @@ const EgresosApp = () => {
 
 export default EgresosApp;
 
+//ultimo codigo funcionando correctamente
