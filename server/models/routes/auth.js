@@ -19,6 +19,7 @@ router.post('/usuarios/validar-legajo', async (req, res) => {
   const { legajo } = req.body;
   try {
     const usuario = await Usuario.findOne({ legajo });
+    console.log('Usuario encontrado:', usuario);
     if (!usuario) {
       return res.status(404).json({ message: 'Legajo no encontrado' });
     }
@@ -34,7 +35,6 @@ router.post('/usuarios/validar-legajo', async (req, res) => {
   }
 });
 
-// Ruta para login
 // Ruta para login
 router.post('/login', async (req, res) => {
   const { legajo, contraseña } = req.body;

@@ -391,7 +391,7 @@
   
 
 
-  import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ShiftsTable from './ShiftsTable';
 import ShiftConfirmation from './ShiftConfirmation';
 import CurrentTime from './CurrentTime';
@@ -415,6 +415,12 @@ const EgresosApp = () => {
 
   const diaActual = horaActual ? ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'][horaActual.getDay() - 1] : '';
 
+  useEffect(() => {
+    if (usuario && diaActual) {
+      verificarTurnoExistente();
+    }
+  }, [usuario, diaActual]);
+  
   // Verificar si el usuario ya tiene un turno asignado en el día actual
   const verificarTurnoExistente = async () => {
     if (!usuario || !diaActual) return;
