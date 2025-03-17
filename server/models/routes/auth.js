@@ -35,6 +35,7 @@ router.post('/usuarios/validar-legajo', async (req, res) => {
 });
 
 // Ruta para login
+// Ruta para login
 router.post('/login', async (req, res) => {
   const { legajo, contraseña } = req.body;
   try {
@@ -54,11 +55,14 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Contraseña incorrecta' });
     }
 
-    // Si la contraseña es correcta
+    // Imprimir usuario en consola para verificar si el nombre existe
+    console.log('Usuario encontrado:', usuario);
+
+    // Si la contraseña es correcta, enviar también el nombre del usuario
     res.status(200).json({ 
       message: 'Login exitoso', 
       token: 'some-jwt-token', 
-      nombre: usuario.nombre  // Agregamos el nombre del usuario
+      nombre: usuario.nombre // Agregar el nombre a la respuesta
     });
 
   } catch (error) {
@@ -66,6 +70,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
+
 
 // Ruta para confirmar el turno
 router.post('/turnos/confirmar', async (req, res) => {
