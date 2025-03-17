@@ -55,7 +55,11 @@ router.post('/login', async (req, res) => {
     }
 
     // Si la contraseña es correcta
-    res.status(200).json({ message: 'Login exitoso', token: 'some-jwt-token' });
+    res.status(200).json({ 
+      message: 'Login exitoso', 
+      token: 'some-jwt-token', 
+      nombre: usuario.nombre  // Agregamos el nombre del usuario
+    });
 
   } catch (error) {
     console.error('Error al hacer login:', error);
