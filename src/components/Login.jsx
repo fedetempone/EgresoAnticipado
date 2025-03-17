@@ -88,62 +88,63 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Login = () => {
+const Login = ({ setIsAuthenticated }) => {
   const [legajo, setLegajo] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [mensaje, setMensaje] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Estado para el loader
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Mostrar el loader
-  
+    setIsLoading(true);
+    setMensaje('');  // Limpiar cualquier mensaje anterior
+
     try {
-      // Verificar el login
       const response = await axios.post('https://egreso-backend.onrender.com/api/auth/login', {
         legajo,
         contraseña,
       });
-  
+
       const data = response.data;
-  
+
+      // Validación de respuestas
       if (data.message === 'Legajo no encontrado') {
         setMensaje('El legajo ingresado no existe');
         setIsLoading(false);
         return;
       }
-  
+
       if (data.message === 'Contraseña incorrecta') {
         setMensaje('La contraseña es incorrecta');
         setIsLoading(false);
         return;
       }
-  
+
       if (data.message === 'Legajo sin contraseña') {
         setMensaje('El legajo no está registrado. Por favor, regístrese.');
         setIsLoading(false);
         navigate('/registro');
         return;
       }
-  
+
       if (data.token) {
-        // Al tener el token, hacemos una segunda solicitud para obtener los datos del usuario
-        const userResponse = await axios.get(`https://egreso-backend.onrender.com/api/auth/usuarios/${legajo}`, {
-          headers: { Authorization: `Bearer ${data.token}` }, // Enviamos el token en los headers
-        });
-  
-        const userData = userResponse.data; // Aquí recibimos los datos completos del usuario
-        console.log("Datos del usuario:", userData);
-  
-        // Guardamos todos los datos en localStorage
+        // Si el login es exitoso, guardamos el token y la info del usuario
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('legajo', legajo);
-        localStorage.setItem('usuario', userData.nombre); // Ahora obtenemos correctamente el nombre
-  
-        setMensaje('Login exitoso. Redirigiendo...');
-        setIsLoading(false); // Ocultar el loader
-        setTimeout(() => navigate('/turnos'), 1500); // Redirigir al usuario
+
+        const userResponse = await axios.get(`https://egreso-backend.onrender.com/api/auth/usuarios/${legajo}`, {
+          headers: { Authorization: `Bearer ${data.token}` },
+        });
+
+        const userData = userResponse.data;
+        console.log("Datos del usuario:", userData);
+
+        localStorage.setItem('usuario', userData.nombre);
+        // Actualizar el estado en el componente App para indicar que está autenticado
+        setIsAuthenticated(true);
+        // Redirigimos al usuario a la sección de turnos
+        navigate('/turnos');
       }
     } catch (error) {
       setMensaje('Error al iniciar sesión. Verifique sus datos.');
@@ -151,7 +152,6 @@ const Login = () => {
       console.error('Error al hacer login', error);
     }
   };
-  
 
   return (
     <div>
@@ -159,7 +159,6 @@ const Login = () => {
       <form onSubmit={handleLogin}>
         <input
           type="text"
-          id="logintextlegajo"
           placeholder="Legajo"
           value={legajo}
           onChange={(e) => setLegajo(e.target.value)}
@@ -167,15 +166,15 @@ const Login = () => {
         />
         <input
           type="password"
-          id="loginpassword"
           placeholder="Contraseña"
           value={contraseña}
           onChange={(e) => setContraseña(e.target.value)}
           required
         />
-        <button id="btn-login" type="submit">Iniciar sesión</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Cargando...' : 'Iniciar sesión'}
+        </button>
       </form>
-      {isLoading && <p>Cargando, por favor espere...</p>} {/* Mostrar el loader */}
       {mensaje && <p>{mensaje}</p>}
     </div>
   );

@@ -81,7 +81,7 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/turnos" element={isAuthenticated ? <EgresosApp /> : <Navigate to="/login" />} />
           <Route path="*" element={<Navigate to="/" replace />} /> 
