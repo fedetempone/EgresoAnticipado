@@ -99,53 +99,57 @@ const Login = ({ setIsAuthenticated }) => {
     e.preventDefault();
     setIsLoading(true);
     setMensaje('');  // Limpiar cualquier mensaje anterior
-
+  
     try {
-      const response = await axios.post('https://egreso-backend.onrender.com/api/auth/login', {
-        legajo,
-        contraseña,
-      });
-
-      const data = response.data;
-
-      // Validación de respuestas
-      if (data.message === 'Legajo no encontrado') {
+      // Primero, verificar si el legajo existe
+      const userResponse = await axios.get(`https://egreso-backend.onrender.com/api/auth/usuarios/${legajo}`);
+      
+      // Si el usuario no existe
+      if (!userResponse.data) {
         setMensaje('El legajo ingresado no existe');
         setIsLoading(false);
         return;
       }
 
-      if (data.message === 'Contraseña incorrecta') {
-        setMensaje('La contraseña es incorrecta');
+      const usuario = userResponse.data;
+
+      // Verificar si la contraseña del usuario es null
+      if (usuario.contraseña === null) {
+        setMensaje('Usuario no registrado. Por favor, regístrese.');
+        setIsLoading(false);
+
+        // Mostrar el mensaje durante 2-3 segundos antes de redirigir al registro
+        setTimeout(() => {
+          navigate('/registro');
+        }, 1500);  // Redirige después de 3 segundos
+        return;
+      }
+
+      // Si el legajo tiene contraseña, verificar que la ingresada sea correcta
+      if (usuario.contraseña !== contraseña) {
+        setMensaje('Contraseña incorrecta');
         setIsLoading(false);
         return;
       }
 
-      if (data.message === 'Legajo sin contraseña') {
-        setMensaje('El legajo no está registrado. Por favor, regístrese.');
-        setIsLoading(false);
-        navigate('/registro');
-        return;
-      }
+      // Si todo está correcto, hacer login llamando al backend para obtener el token
+      const loginResponse = await axios.post('https://egreso-backend.onrender.com/api/auth/login', {
+        legajo,
+        contraseña,
+      });
 
-      if (data.token) {
-        // Si el login es exitoso, guardamos el token y la info del usuario
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('legajo', legajo);
+      const { token } = loginResponse.data;
 
-        const userResponse = await axios.get(`https://egreso-backend.onrender.com/api/auth/usuarios/${legajo}`, {
-          headers: { Authorization: `Bearer ${data.token}` },
-        });
+      // Guardar el token y los datos del usuario
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('legajo', legajo);
+      localStorage.setItem('usuario', usuario.nombre);
 
-        const userData = userResponse.data;
-        console.log("Datos del usuario:", userData);
+      // Actualizar el estado en el componente App para indicar que está autenticado
+      setIsAuthenticated(true);
 
-        localStorage.setItem('usuario', userData.nombre);
-        // Actualizar el estado en el componente App para indicar que está autenticado
-        setIsAuthenticated(true);
-        // Redirigimos al usuario a la sección de turnos
-        navigate('/turnos');
-      }
+      // Redirigir al usuario a la sección de turnos
+      navigate('/turnos');
     } catch (error) {
       setMensaje('Error al iniciar sesión. Verifique sus datos.');
       setIsLoading(false);
