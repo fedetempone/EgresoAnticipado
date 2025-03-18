@@ -462,7 +462,17 @@
         alert('Selecciona una hora antes de confirmar.');
         return;
       }
-  
+
+      const obtenerHoraServidor = async () => {
+        try {
+          const response = await axios.get(`${backendUrl}/api/hora`); 
+          return response.data.hora; 
+        } catch (error) {
+          console.error("Error al obtener la hora del servidor:", error);
+          return null;
+        }
+      };
+
       // Obtener la hora del servidor
       const horaDelServidor = await obtenerHoraServidor();
       if (!horaDelServidor) {
