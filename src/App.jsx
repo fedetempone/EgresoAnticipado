@@ -84,9 +84,7 @@ function App() {
           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/turnos" element={isAuthenticated ? <EgresosApp /> : <Navigate to="/login" />} />
-          <Route path="*" element={<Navigate to="/" replace />} /> 
-          {/* redirijo a landing page cualquier cosa que ponga luego del slash "/" porque
-          al estar en turnos y tocar f5 quiere volver a cargar turnos y dice 404not found */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
     </Router>
@@ -94,4 +92,3 @@ function App() {
 }
 
 export default App;
-

@@ -162,22 +162,83 @@ const ServiceShifts = (backendUrl, legajo, usuarioNombre) => {
     obtenerDiaYHora();
   }, [backendUrl]); // Solo se ejecuta una vez cuando el componente se monta
 
+  // useEffect(() => {
+  //   if (diaActual) {
+  //     console.log("Día actual calculado en useEffect:", diaActual); // Verificación del día calculado desde la API
+
+  //     // Verificar si el usuario ya tiene un turno en el día actual
+  //     const verificarTurno = async () => {
+  //       try {
+  //         const respuesta = await axios.get(`${backendUrl}/api/turnos`);
+  //         const turnos = respuesta.data;
+
+  //         console.log("Turnos del día actual:", turnos); // Verificación de los turnos del día actual
+
+  //         // Verificar si el nombre del usuario ya está en el arreglo de turnos del día actual
+  //         if (turnos[diaActual] && turnos[diaActual].includes(usuarioNombre)) {
+  //           console.log("El usuario ya tiene un turno asignado para hoy.");
+  //           setTurnoExistente(`Ya tienes un turno asignado para hoy (${diaActual}).`);
+  //         } else {
+  //           setTurnoExistente(null); // No tiene un turno asignado en el día actual
+  //         }
+  //       } catch (error) {
+  //         console.error('Error al verificar turno:', error);
+  //         setError('Error al verificar turno.');
+  //       }
+  //     };
+
+  //     // Primero verificamos el turno y luego obtenemos la tabla de turnos
+  //     verificarTurno();
+
+  //     axios.get(`${backendUrl}/api/turnos`)
+  //       .then((response) => {
+  //         const turnos = response.data;
+  //         const diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
+  //         const turnosDisponibles = {};
+  //         let turnosValidados = true;
+
+  //         diasSemana.forEach((dia) => {
+  //           if (turnos[dia]) {
+  //             turnosDisponibles[dia] = turnos[dia];
+  //           } else {
+  //             turnosValidados = false;
+  //           }
+  //         });
+
+  //         if (turnosValidados) {
+  //           setTabla(turnosDisponibles);
+  //         } else {
+  //           setError('No se encontraron turnos completos en la base de datos.');
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error al obtener los turnos:', error);
+  //         setError('Error al obtener los turnos.');
+  //       });
+  //   }
+  // }, [diaActual, backendUrl, usuarioNombre]);
+
   useEffect(() => {
     if (diaActual) {
-      console.log("Día actual calculado en useEffect:", diaActual); // Verificación del día calculado desde la API
-
+      // Decodificar el día actual antes de usarlo y luego quitar los acentos
+      const diaDecodificado = decodeURIComponent(diaActual);
+  
+      // Eliminar tildes utilizando normalize
+      const diaSinTilde = diaDecodificado.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      console.log("Día actual calculado en useEffect:", diaSinTilde); // Verificación del día calculado sin tilde
+  
       // Verificar si el usuario ya tiene un turno en el día actual
       const verificarTurno = async () => {
         try {
           const respuesta = await axios.get(`${backendUrl}/api/turnos`);
           const turnos = respuesta.data;
-
+  
           console.log("Turnos del día actual:", turnos); // Verificación de los turnos del día actual
-
+  
           // Verificar si el nombre del usuario ya está en el arreglo de turnos del día actual
-          if (turnos[diaActual] && turnos[diaActual].includes(usuarioNombre)) {
+          if (turnos[diaSinTilde] && turnos[diaSinTilde].includes(usuarioNombre)) {
             console.log("El usuario ya tiene un turno asignado para hoy.");
-            setTurnoExistente(`Ya tienes un turno asignado para hoy (${diaActual}).`);
+            setTurnoExistente(`Ya tienes un turno asignado para hoy (${diaSinTilde}).`);
           } else {
             setTurnoExistente(null); // No tiene un turno asignado en el día actual
           }
@@ -186,17 +247,17 @@ const ServiceShifts = (backendUrl, legajo, usuarioNombre) => {
           setError('Error al verificar turno.');
         }
       };
-
+  
       // Primero verificamos el turno y luego obtenemos la tabla de turnos
       verificarTurno();
-
+  
       axios.get(`${backendUrl}/api/turnos`)
         .then((response) => {
           const turnos = response.data;
           const diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
           const turnosDisponibles = {};
           let turnosValidados = true;
-
+  
           diasSemana.forEach((dia) => {
             if (turnos[dia]) {
               turnosDisponibles[dia] = turnos[dia];
@@ -204,7 +265,7 @@ const ServiceShifts = (backendUrl, legajo, usuarioNombre) => {
               turnosValidados = false;
             }
           });
-
+  
           if (turnosValidados) {
             setTabla(turnosDisponibles);
           } else {
@@ -217,6 +278,7 @@ const ServiceShifts = (backendUrl, legajo, usuarioNombre) => {
         });
     }
   }, [diaActual, backendUrl, usuarioNombre]);
+  
 
   const agregarTurno = async (horaSeleccionada) => {
     if (turnoExistente) {
