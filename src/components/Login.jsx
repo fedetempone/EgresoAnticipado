@@ -13,16 +13,20 @@ const Login = ({ setIsAuthenticated }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setMensaje('');  // Limpiar cualquier mensaje anterior
+    setMensaje(''); // Limpiar cualquier mensaje anterior
+
     console.log("Intentando hacer login...");
     console.log("Legajo ingresado:", legajo);
     console.log("Contraseña ingresada:", contraseña);
-  
+
     try {
-      // Primero, verificar si el legajo existe
-      const userResponse = await axios.get(`https://egreso-backend.onrender.com/api/auth/usuarios/${legajo}`);
+      // Verificar si el legajo existe en la base de datos
+      const userResponse = await axios.get(
+        `https://egreso-backend.onrender.com/api/auth/usuarios/${legajo}`
+      );
+
       console.log("Respuesta del backend:", userResponse.data);
-      // Si el usuario no existe
+
       if (!userResponse.data) {
         setMensaje('El legajo ingresado no existe');
         setIsLoading(false);
@@ -31,51 +35,49 @@ const Login = ({ setIsAuthenticated }) => {
 
       const usuario = userResponse.data;
 
-      // Verificar si la contraseña del usuario es null
+      // Si la contraseña en la base de datos es null, el usuario aún no se ha registrado completamente
       if (usuario.contraseña === null) {
-        setMensaje('Usuario no registrado. Por favor, regístrese.');
+        setMensaje('Usuario no registrado. Redirigiendo a registro...');
         setIsLoading(false);
 
-        // Mostrar el mensaje durante 1.5 segundos antes de redirigir al registro
+        // Redirige al usuario a la página de registro después de 1.5 segundos
         setTimeout(() => {
           navigate('/registro');
-        }, 1500);  // Redirige después de 1.5 segundos
+        }, 1500);
         return;
       }
 
-      // Si el legajo tiene contraseña, verificar que la ingresada sea correcta
+      // Verificar si la contraseña ingresada es correcta
       if (usuario.contraseña !== contraseña) {
         setMensaje('Contraseña incorrecta');
         setIsLoading(false);
         return;
       }
 
-      // Si todo está correcto, hacer login llamando al backend para obtener el token
-      const loginResponse = await axios.post('https://egreso-backend.onrender.com/api/auth/login', {
-        legajo,
-        contraseña,
-      });
-
-      const { token } = loginResponse.data;
-
-      // Guardar el token y los datos del usuario
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('legajo', legajo);
-      localStorage.setItem('usuario', usuario.nombre);
-
-      // Actualizar el estado en el componente App para indicar que está autenticado
-      setIsAuthenticated(true);
-
-      // Redirigir al usuario a la sección de turnos
-      navigate('/turnos');
-    } catch (error) {
-      setMensaje('Error al iniciar sesión. Verifique sus datos.');
-      setIsLoading(false);
-      if (error.userResponse){
-        console.error('Error al hacer login', error);
-        console.log("Respuesta del backend con error:", error.useResponse.data);
+      console.log("Token del usuario:", usuario.token);
+      // Si el usuario tiene un token, guardar los datos en localStorage y redirigir
+      if (usuario.token) {
+        localStorage.setItem('authToken', usuario.token);
+        localStorage.setItem('legajo', legajo); // Guarda el legajo en localStorage
+        localStorage.setItem('usuario', usuario.nombre);
+        setMensaje('Login exitoso. Aguarde y podrá agendar su turno...');
+        setTimeout(() => {
+          navigate('/turnos');
+        }, 2000);
+      } else {
+        // Si no hay token, muestra mensaje de error
+        console.log('no hay token bobo');
+        setMensaje('Error al iniciar sesión. Verifique sus datos.');
       }
+    } catch (error) {
+      // Manejar errores de red o problemas con la solicitud
+      setMensaje('Error al hacer login. Intente nuevamente.');
+      console.error('Error al hacer login', error);
+    } finally {
+      setIsLoading(false);
     }
+
+    setIsAuthenticated(true); // Si el login es exitoso, marcar como autenticado
   };
 
   return (

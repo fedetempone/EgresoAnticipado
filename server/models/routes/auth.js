@@ -1,9 +1,11 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const Usuario = require('../Usuario');
-const Turno = require('../Turno');
-const router = express.Router();  
+const Turno = require('../Turno');  // Asegúrate de tener un modelo de Turno
+const jwt = require('jsonwebtoken');  // Asegúrate de haber instalado jsonwebtoken
+const router = express.Router();
+
+// Clave secreta para el token JWT
+const JWT_SECRET = 'oasidh1298389aud0noasnas56464asd!';  // Sustituye esto por tu propia clave secreta
 
 // Obtener todos los usuarios
 router.get('/usuarios', async (req, res) => {
@@ -21,7 +23,6 @@ router.post('/usuarios/validar-legajo', async (req, res) => {
   const { legajo } = req.body;
   try {
     const usuario = await Usuario.findOne({ legajo });
-    console.log('Usuario encontrado:', usuario);
     if (!usuario) {
       return res.status(404).json({ message: 'Legajo no encontrado' });
     }
@@ -40,54 +41,35 @@ router.post('/usuarios/validar-legajo', async (req, res) => {
 // Ruta para login
 router.post('/login', async (req, res) => {
   const { legajo, contraseña } = req.body;
-  
-  const usuario = await Usuario.findOne({ legajo });
-
-  if (!usuario) {
-    return res.status(400).json({ message: 'Legajo no encontrado' });
-  }
-
-  if (usuario.contraseña === null) {
-    return res.status(400).json({ message: 'Legajo sin contraseña' });
-  }
-
-  // Verifica la contraseña utilizando bcrypt
-  const esContraseñaCorrecta = await bcrypt.compare(contraseña, usuario.contraseña);
-  if (!esContraseñaCorrecta) {
-    return res.status(400).json({ message: 'Contraseña incorrecta' });
-  }
-
-  // Generar token y retornar
-  const token = generateToken(usuario); // tu lógica para generar el token
-  res.json({ token });
-});
-
-// Ruta para registrar un usuario (con encriptación de la contraseña)
-router.post('/registro', async (req, res) => {
-  const { legajo, email, contraseña } = req.body;
-
   try {
-    const usuarioExistente = await Usuario.findOne({ legajo });
+    const usuario = await Usuario.findOne({ legajo });
 
-    if (usuarioExistente) {
-      return res.status(400).json({ message: 'Legajo ya registrado' });
+    if (!usuario) {
+      return res.status(404).json({ message: 'Legajo no encontrado' });
     }
 
-    // Encriptar la contraseña antes de guardarla
-    const salt = await bcrypt.genSalt(10);
-    const contraseñaEncriptada = await bcrypt.hash(contraseña, salt);
+    // Si el usuario tiene contraseña null, se redirige al formulario de registro
+    if (usuario.contraseña === null) {
+      return res.status(400).json({ message: 'Legajo sin contraseña. Por favor, regístrese.' });
+    }
 
-    // Crear un nuevo usuario con la contraseña encriptada
-    const nuevoUsuario = new Usuario({
-      legajo,
-      email,
-      contraseña: contraseñaEncriptada,
-    });
+    // Verificar la contraseña sin encriptación
+    if (usuario.contraseña !== contraseña) {
+      return res.status(400).json({ message: 'Contraseña incorrecta' });
+    }
 
-    await nuevoUsuario.save();
-    res.status(201).json({ message: 'Usuario registrado con éxito' });
+    // Si la contraseña es correcta, generar el token JWT
+    const token = jwt.sign(
+      { legajo: usuario.legajo, nombre: usuario.nombre, email: usuario.email },
+      JWT_SECRET,  // Usamos la clave secreta directamente en el código
+      { expiresIn: '1h' }  // El token expirará en 1 hora (ajusta el tiempo según necesites)
+    );
+
+    // Responder con el token JWT
+    res.status(200).json({ message: 'Login exitoso', token });
+
   } catch (error) {
-    console.error('Error al registrar usuario:', error);
+    console.error('Error al hacer login:', error);
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
@@ -164,17 +146,10 @@ router.put('/usuarios/:legajo', async (req, res) => {
   const { email, contraseña } = req.body;  // Los nuevos datos
 
   try {
-    // Si la contraseña es nueva, la encriptamos antes de actualizar
-    let contraseñaEncriptada = contraseña;
-    if (contraseña) {
-      const salt = await bcrypt.genSalt(10);
-      contraseñaEncriptada = await bcrypt.hash(contraseña, salt);
-    }
-
     // Buscamos al usuario por legajo y lo actualizamos
     const usuario = await Usuario.findOneAndUpdate(
       { legajo },  // Buscar por legajo
-      { email, contraseña: contraseñaEncriptada },  // Actualizar estos campos
+      { email, contraseña },  // Actualizar estos campos
       { new: true }  // Retornar el documento actualizado
     );
 
