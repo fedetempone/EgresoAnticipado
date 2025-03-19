@@ -14,11 +14,14 @@ const Login = ({ setIsAuthenticated }) => {
     e.preventDefault();
     setIsLoading(true);
     setMensaje('');  // Limpiar cualquier mensaje anterior
+    console.log("Intentando hacer login...");
+    console.log("Legajo ingresado:", legajo);
+    console.log("Contraseña ingresada:", contraseña);
   
     try {
       // Primero, verificar si el legajo existe
       const userResponse = await axios.get(`https://egreso-backend.onrender.com/api/auth/usuarios/${legajo}`);
-      
+      console.log("Respuesta del backend:", userResponse.data);
       // Si el usuario no existe
       if (!userResponse.data) {
         setMensaje('El legajo ingresado no existe');
@@ -68,7 +71,10 @@ const Login = ({ setIsAuthenticated }) => {
     } catch (error) {
       setMensaje('Error al iniciar sesión. Verifique sus datos.');
       setIsLoading(false);
-      console.error('Error al hacer login', error);
+      if (error.userResponse){
+        console.error('Error al hacer login', error);
+        console.log("Respuesta del backend con error:", error.useResponse.data);
+      }
     }
   };
 

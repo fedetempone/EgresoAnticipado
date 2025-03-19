@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Ruta para registrar un usuario (con encriptación de la contraseña)
-router.post('/api/auth/registro', async (req, res) => {
+router.post('/registro', async (req, res) => {
   const { legajo, email, contraseña } = req.body;
 
   try {
