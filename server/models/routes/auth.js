@@ -1,3 +1,4 @@
+//////////////////////////////////////////////////
 const express = require('express');
 const Usuario = require('../Usuario');
 const Turno = require('../Turno');
@@ -10,6 +11,7 @@ const JWT_SECRET = 'oasidh1298389aud0noasnas56464asd!';
 router.get('/usuarios', async (req, res) => {
   try {
     const usuarios = await Usuario.find();
+    console.log('usuariosobtenidos', usuarios);
     res.status(200).json(usuarios);
   } catch (error) {
     console.error('Error al obtener los usuarios:', error);
@@ -106,5 +108,52 @@ router.post('/turnos/confirmar', async (req, res) => {
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 });
+
+// Obtener usuario por legajo
+router.get('/usuarios/:legajo', async (req, res) => {
+  const { legajo } = req.params;
+  try {
+    const usuario = await Usuario.findOne({ legajo });
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json(usuario);
+  } catch (error) {
+    console.error('Error al obtener el usuario:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+});
+
+// Ruta para actualizar los datos de un usuario
+router.put('/usuarios/:legajo', async (req, res) => {
+  const { legajo } = req.params;  // Legajo del usuario que queremos actualizar
+  const { email, contraseña } = req.body;  // Los nuevos datos
+
+  try {
+    // Si la contraseña es nueva, la encriptamos antes de actualizar
+    let contraseñaEncriptada = contraseña;
+    if (contraseña) {
+      const salt = await bcrypt.genSalt(10);
+      contraseñaEncriptada = await bcrypt.hash(contraseña, salt);
+    }
+
+    // Buscamos al usuario por legajo y lo actualizamos
+    const usuario = await Usuario.findOneAndUpdate(
+      { legajo },  // Buscar por legajo
+      { email, contraseña: contraseñaEncriptada },  // Actualizar estos campos
+      { new: true }  // Retornar el documento actualizado
+    );
+
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.status(200).json(usuario);  // Devolver el usuario actualizado
+  } catch (error) {
+    console.error('Error al actualizar el usuario:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+});
+
 
 module.exports = router;
