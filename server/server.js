@@ -56,6 +56,7 @@ const obtenerDiaActual = async () => {
 
 // Nueva ruta para obtener la hora actual
 app.get('/api/hora', async (req, res) => {
+  console.log('horaobtenidadelservidorenserver.js', horaServidor);
   const horaServidor = await obtenerDiaActual();
   res.json(horaServidor);
 });
@@ -84,6 +85,7 @@ app.get('/api/turnos', async (req, res) => {
 // Ruta para obtener los turnos de un día específico
 app.get('/api/turnos/:dia', async (req, res) => {
   const dia = req.params.dia;
+  console.log('diadeserver.js en turnos/:dia', dia);
   try {
     const turnos = await Turno.find();
     if (turnos.length === 0) {
