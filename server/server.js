@@ -56,7 +56,6 @@ const obtenerDiaActual = async () => {
 
 // Nueva ruta para obtener la hora actual
 app.get('/api/hora', async (req, res) => {
-  console.log('horaobtenidadelservidorenserver.js', horaServidor);
   const horaServidor = await obtenerDiaActual();
   res.json(horaServidor);
 });
