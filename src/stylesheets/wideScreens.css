@@ -1,0 +1,22 @@
+@media (min-width: 1280px){
+    .rainbow {
+        height: auto;
+        width: 50%;
+    }
+    
+    .landing-buttons{
+        margin-top: 25%;
+    }
+
+    .landing-description {
+        font-size: 1.8rem;
+    }
+
+    .landing-title {
+        font-size: 3rem;
+    }
+    /*componente registro inputs */
+    .registro-container div input {
+        width: 40vw !important;
+    }
+}

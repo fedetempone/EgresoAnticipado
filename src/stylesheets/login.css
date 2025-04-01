@@ -1,0 +1,28 @@
+/*ESTILOS PARA EL FORMULARIO DE LOGIN*/
+
+.login-container form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.login-container form,
+.login-container form input {
+    text-align: center;
+    margin: 10px;
+}
+
+.login-container form input {
+    border: 2px solid #377af5;
+    border-radius: 5px;
+    padding: 5px;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    background-color: white; /* Asegura que el fondo sea blanco */
+}
+
+.login-container form input:focus {
+    border: 2px solid #fbb300  !important; /* Fuerza el cambio de color */
+    box-shadow: 0 0 5px rgba(255, 165, 0, 0.7);
+}

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import '../stylesheets/landingPage.css';
+import '../stylesheets/login.css';
 
 const Login = ({ setIsAuthenticated }) => {
   const [legajo, setLegajo] = useState('');
@@ -60,28 +62,34 @@ const Login = ({ setIsAuthenticated }) => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Legajo"
-          value={legajo}
-          onChange={(e) => setLegajo(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={contraseña}
-          onChange={(e) => setContraseña(e.target.value)}
-          required
-        />
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Cargando...' : 'Iniciar sesión'}
-        </button>
-      </form>
-      {mensaje && <p>{mensaje}</p>}
+    <div className="landing-container">
+      <div className="rainbow">
+        <div className="login-container">
+          <h2>INICIAR SESION</h2>
+          <p>El servidor utilizado es GRATUITO, por tanto puede </p>
+          <p>presentar demoras de hasta 1 minuto, tené paciencia</p>
+          <form onSubmit={handleLogin}>
+            <input
+              type="text"
+              placeholder="LEGAJO"
+              value={legajo}
+              onChange={(e) => setLegajo(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="CONTRASEÑA"
+              value={contraseña}
+              onChange={(e) => setContraseña(e.target.value)}
+              required
+            />
+            <button className='css-button-arrow--sky' type="submit" disabled={isLoading}>
+              {isLoading ? 'Cargando...' : 'Iniciar sesión'}
+            </button>
+          </form>
+          {mensaje && <p>{mensaje}</p>}
+        </div>
+      </div>
     </div>
   );
 };

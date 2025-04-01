@@ -1,0 +1,33 @@
+@media (max-width: 828px ){
+    /*LANDING PAGE*/
+    .landing-title {
+        font-size: 30px;
+    }
+    
+    .css-button-arrow--sky{
+        padding: 3px 4px;
+        font-size: 10px;
+    }
+
+    .rainbow {
+        width: 100%;
+        padding: 20px;
+        height: auto;
+        word-wrap: break-word;
+    }
+
+    .landing-buttons{
+        flex-direction: column;
+        margin: 5px;
+    }
+
+    /*LOGIN*/
+
+    /*REGISTRO*/
+
+    /*TURNOS*/
+    .turnos-background {
+        width: 100%;
+    }
+}
+

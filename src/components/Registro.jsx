@@ -1,6 +1,10 @@
 import React, { useState } from 'react'; 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import "../stylesheets/landingPage.css";
+import "../stylesheets/smallDevices.css"; 
+import "../stylesheets/wideScreens.css"; 
+import "../stylesheets/registro.css"; 
 
 const Registro = () => {
   const [legajo, setLegajo] = useState('');
@@ -115,98 +119,103 @@ const Registro = () => {
   };
 
   return (
-    <div>
-      <h1>Registro</h1>
-      {mensaje && <p style={{ whiteSpace: 'pre-line' }}>{mensaje}</p>}
+    <div className="landing-container">
+      <div className="rainbow">
+        <h1>REGISTRARSE</h1>
+        {mensaje && <p style={{ whiteSpace: 'pre-line' }}>{mensaje}</p>}
+        <div className="login-container">
+        <form onSubmit={handleRegistro}>
+          {/* Solo mostramos el campo de legajo si no ha sido validado */}
+          {!legajoValidado && (
+            <>
+              <div className='legajo-container-form'>
+                <label htmlFor="legajo">Legajo:</label>
+                <input
+                  type="text"
+                  id="legajo"
+                  value={legajo}
+                  onChange={(e) => setLegajo(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault(); // Evita que el formulario se envíe
+                      validarLegajo();
+                    }
+                  }}
+                  required
+                />
+              </div>
+              <div>
+                <button className='css-button-arrow--sky' type="button" onClick={validarLegajo}>Validar Legajo</button>
+              </div>
+            </>
+          )}
 
-      <form onSubmit={handleRegistro}>
-        {/* Solo mostramos el campo de legajo si no ha sido validado */}
-        {!legajoValidado && (
-          <>
+          {/* Campo para ingresar el código si el legajo es válido */}
+          {legajoValidado && !codigoValido && (
             <div>
-              <label htmlFor="legajo">Legajo:</label>
+              <label htmlFor="codigo">Código:</label>
               <input
                 type="text"
-                id="legajo"
-                value={legajo}
-                onChange={(e) => setLegajo(e.target.value)}
+                id="codigo"
+                value={codigo}
+                onChange={(e) => setCodigo(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault(); // Evita que el formulario se envíe
-                    validarLegajo();
+                    verificarCodigo();
                   }
                 }}
                 required
               />
+              <button type="button" onClick={verificarCodigo}>Verificar Código</button>
             </div>
-            <div>
-              <button type="button" onClick={validarLegajo}>Validar Legajo</button>
-            </div>
-          </>
-        )}
+          )}
 
-        {/* Campo para ingresar el código si el legajo es válido */}
-        {legajoValidado && !codigoValido && (
-          <div>
-            <label htmlFor="codigo">Código:</label>
-            <input
-              type="text"
-              id="codigo"
-              value={codigo}
-              onChange={(e) => setCodigo(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault(); // Evita que el formulario se envíe
-                  verificarCodigo();
-                }
-              }}
-              required
-            />
-            <button type="button" onClick={verificarCodigo}>Verificar Código</button>
-          </div>
-        )}
+          {/* Campos para email y contraseña solo si el código es válido */}
+          {codigoValido && (
+            <>
+            <div className="registro-container">
+              <div>
+                <label htmlFor="email">Email:</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
 
-        {/* Campos para email y contraseña solo si el código es válido */}
-        {codigoValido && (
-          <>
-            <div>
-              <label htmlFor="email">Email:</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+              <div>
+                <label htmlFor="contraseña">Contraseña:</label>
+                <input
+                  type="password"
+                  id="contraseña"
+                  value={contraseña}
+                  onChange={(e) => setContraseña(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleRegistro(e)}
+                  required
+                />
+              </div>
 
-            <div>
-              <label htmlFor="contraseña">Contraseña:</label>
-              <input
-                type="password"
-                id="contraseña"
-                value={contraseña}
-                onChange={(e) => setContraseña(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleRegistro(e)}
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="confirmarContraseña">Confirmar Contraseña:</label>
-              <input
-                type="password"
-                id="confirmarContraseña"
-                value={confirmarContraseña}
-                onChange={(e) => setConfirmarContraseña(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleRegistro(e)}
-                required
-              />
-            </div>
-            <button type="submit">Registrar</button>
-          </>
-        )}
-      </form>
+              <div>
+                <label htmlFor="confirmarContraseña">Confirmar Contraseña:</label>
+                <input
+                  type="password"
+                  id="confirmarContraseña"
+                  value={confirmarContraseña}
+                  onChange={(e) => setConfirmarContraseña(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleRegistro(e)}
+                  required
+                />
+              </div>
+              </div>
+              <button className='css-button-arrow--sky' type="submit">Registrar</button>
+            </>
+          )}
+        </form>
+        </div>
+      </div>
     </div>
   );
 };

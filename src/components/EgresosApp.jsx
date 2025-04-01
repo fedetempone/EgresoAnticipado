@@ -264,9 +264,11 @@ const EgresosApp = () => {
 
   return (
     <div>
-      <h1>Turnos para irse temprano</h1>
-      <UserGreeting usuario={usuario} />
-      <CurrentTime diaActual={diaActual} horaHabilitada={horaHabilitada} />
+      <div className="shiftsDescriptions">
+        <h1>Turnos para irse temprano</h1>
+        <UserGreeting usuario={usuario} />
+        <CurrentTime diaActual={diaActual} horaHabilitada={horaHabilitada} />
+      </div>
       <ShiftsTable tabla={tabla} diaActual={diaActualDecodificado} horaHabilitada={horaHabilitada} manejarSeleccion={manejarSeleccion} />
       <ShiftConfirmation confirmarTurno={confirmarTurno} />
     </div>

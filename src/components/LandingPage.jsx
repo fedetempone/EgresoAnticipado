@@ -1,32 +1,33 @@
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import "../stylesheets/landingPage.css";
+import "../stylesheets/smallDevices.css"; 
+import "../stylesheets/wideScreens.css"; 
 
 const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">
-        Coordinación de Centro Quirúrgico
-      </h1>
-      <h2 className="text-xl text-gray-600 mb-6 text-center">
-        Agenda Semanal Turno Tarde
-      </h2>
-      <div className="flex gap-4">
-        <button
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
-          onClick={() => navigate("/login")}
-        >
-          Iniciar Sesión
-        </button>
-        <button
-          className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition"
-          onClick={() => navigate("/registro")}
-        >
-          Registrarse
-        </button>
-      </div>
+    <div className="landing-container">
+      <div className="rainbow">
+        <h1 className="landing-title">Coordinación de Centro Quirúrgico</h1>
+        <h2 className="landing-description">Agenda Semanal Turno Tarde</h2>
+        <div className="landing-buttons">
+          <div className="landingButton-login-button">
+            <button className="css-button-arrow--sky" onClick={() => navigate("/login")}>
+              Iniciar Sesión
+            </button>
+          </div>
+          <div className="landingButton-register-button">
+            <button className="css-button-arrow--sky" onClick={() => navigate("/registro")}>
+              Registrarse
+            </button>
+          </div>
+        </div>  
+      </div> 
     </div>
   );
 };
 
 export default LandingPage;
+
